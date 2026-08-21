@@ -58,40 +58,6 @@ and unique enough sits nearby. It uses Vencord's `\i` wildcard for the minified
 names, which is what lets it survive Discord renaming them between builds. It
 matches one module, once.
 
-## Plates stay still until you hover them
-
-The nameplate component takes a `hovered` prop, and it would have been the
-shorter way to do this. It is also the wrong one. That prop does not decide
-whether the plate renders, only whether it animates:
-
-```js
-animate = isFocused && !reducedMotion && (hovered || selected)
-```
-
-Forcing it to `true` would set every plate in the list playing video at once, all
-the time. Leaving it alone means the plates are all visible but static, and only
-the row under your cursor animates, which is what Discord does today anyway. On a
-long DM list that difference is the whole cost of the plugin.
-
-One consequence worth knowing: a nameplate whose art has no video renders as an
-`<img>`, not a `<video>`. If you go looking in the inspector, counting `video`
-elements will under-report what is on screen.
-
-## Spacing
-
-With plates on every row, neighbouring plates end up touching. No CSS ships with
-this plugin, but if you want a gap, this is the cheap way to write it:
-
-```css
-[class*="privateChannels_"] li[class*="dm_"] {
-  margin-bottom: 4px;
-}
-```
-
-It keys off the row's own class, so there is no `:has()` and no `:nth-child`
-involved, both of which get expensive in a list Discord reorders every time a
-message arrives. `dm_` also means the Friends, Nitro, Shop, Family Center and
-Quests rows keep their normal spacing.
 
 ## License
 
