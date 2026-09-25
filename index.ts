@@ -13,7 +13,7 @@ export default definePlugin({
 
     patches: [
         {
-            find: /\i=\i\.useRef\(null\),\i=null!=\i&&\(\i\|\|\i\|\|\i\);/,
+            find: '"PrivateChannel"',
             replacement: {
                 match: /(\i)=null!=(\i)&&\(\i\|\|\i\|\|\i\);/,
                 replace: "$1=null!=$2;"
