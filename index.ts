@@ -12,7 +12,7 @@ interface Nameplate { palette?: { darkBackground?: string; }; }
 
 export default definePlugin({
     name: "AlwaysShowDMNameplates",
-    description: "Shows the nameplate on every DM row that has one, instead of only on the hovered, focused or open conversation, and gives each row its nameplate colour as --vc-plate-tint for themes",
+    description: "Shows the nameplate on every DM row that has one, instead of only on the hovered, focused or open conversation, and gives DM and member list rows their nameplate colour as --vc-plate-tint for themes",
     authors: [{ name: "heart_menace", id: 281162701303185408n }],
 
     patches: [
@@ -28,6 +28,13 @@ export default definePlugin({
                     replace: "$1style:$self.tint($2),"
                 }
             ]
+        },
+        {
+            find: "lostPermissionTooltipText:",
+            replacement: {
+                match: /(nameplate:(\i),)(?=subText:)/,
+                replace: "$1style:$self.tint($2),"
+            }
         }
     ],
 
