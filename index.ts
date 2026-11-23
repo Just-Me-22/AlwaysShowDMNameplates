@@ -6,18 +6,33 @@
 
 import definePlugin from "@utils/types";
 
+const HEX = /^#[0-9a-f]{6}$/i;
+
+interface Nameplate { palette?: { darkBackground?: string; }; }
+
 export default definePlugin({
     name: "AlwaysShowDMNameplates",
-    description: "Shows the nameplate on every DM row that has one, instead of only on the hovered, focused or open conversation",
+    description: "Shows the nameplate on every DM row that has one, instead of only on the hovered, focused or open conversation, and gives each row its nameplate colour as --vc-plate-tint for themes",
     authors: [{ name: "heart_menace", id: 281162701303185408n }],
 
     patches: [
         {
-            find: '"PrivateChannel"',
-            replacement: {
-                match: /(\i)=null!=(\i)&&\(\i\|\|\i\|\|\i\);/,
-                replace: "$1=null!=$2;"
-            }
+            find: "PrivateChannel.renderAvatar",
+            replacement: [
+                {
+                    match: /(\i)=null!=(\i)&&\(\i\|\|\i\|\|\i\)(?=[,;])/,
+                    replace: "$1=null!=$2"
+                },
+                {
+                    match: /(\(0,\i\.jsxs\)\(\i,\{className:\i\(\)\(\i\.\i,\i\.dm\),)(?=role:\i,[^]{0,800}?nameplate:\i\?(\i):void 0)/,
+                    replace: "$1style:$self.tint($2),"
+                }
+            ]
         }
-    ]
+    ],
+
+    tint(nameplate: Nameplate | null | undefined) {
+        const color = nameplate?.palette?.darkBackground;
+        return typeof color === "string" && HEX.test(color) ? { "--vc-plate-tint": color } : undefined;
+    }
 });
